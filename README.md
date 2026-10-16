@@ -1,65 +1,147 @@
 # MCPlus
 
-An experimental macOS menu bar utility for managing windows in Mission Control. Built with Swift, AppKit and SwiftUI. 독립적으로 구현한 Mission Control 창 관리 앱의 개발용 소스입니다.
+Mission Control에서 창을 선택하고, 닫거나 최소화할 수 있는 macOS 메뉴 막대 앱입니다. 마우스로 썸네일의 ×를 누르거나 키보드 단축키로 창을 관리합니다.
 
-**Source release · development version 0.2.0.** This repository does not provide a signed, notarized or App Store approved application. Full physical keyboard/mouse, supported OS and hardware coverage is not complete. See [status and limitations](docs/STATUS.md).
+> **현재 배포는 직접 빌드해서 사용하는 개발용 소스입니다.** 더블클릭으로 설치하는 DMG나 서명·공증된 앱은 제공하지 않습니다. 아래 순서대로 소스코드를 실행 가능한 앱으로 만든 뒤 설치해 주세요. 로컬 빌드에는 유료 Apple Developer 가입이 필요하지 않습니다.
 
-## Build
+## 처음 설치하기
 
-Requirements: macOS 13 or later, Xcode or Apple Command Line Tools with Swift 5.8+, and internet access to fetch Sparkle. The deployment target is macOS 13; runtime observations so far are limited to one Mac on macOS 26.5.2.
+### 1. 소스 ZIP 다운로드
+
+**[MCPlus 소스 ZIP 다운로드](https://github.com/TaeBeomShin/MCPlus/releases/download/v0.2.0-source.1/MCPlus-0.2.0-source.zip)**
+
+다운로드한 `MCPlus-0.2.0-source.zip`을 더블클릭해 압축을 풉니다. `MCPlus-0.2.0` 폴더 안에 `README.md`, `Sources`, `scripts` 등이 보이면 됩니다. [릴리스 페이지](https://github.com/TaeBeomShin/MCPlus/releases/tag/v0.2.0-source.1)의 **Assets**에서도 같은 ZIP을 받을 수 있습니다.
+
+준비물은 macOS 13 이상을 사용하는 Mac과 인터넷 연결입니다. macOS 13은 빌드 대상의 최소 버전이며, 실제 동작 관측은 현재 한 대의 macOS 26.5.2 Mac에 한정됩니다. 지원 OS·하드웨어 전체 검증은 아직 완료하지 않았습니다.
+
+### 2. 개발 도구 설치
+
+`⌘ Space`를 누르고 **터미널**을 검색해 실행합니다. 아래 명령을 붙여넣고 Return을 누르세요.
 
 ```sh
+xcode-select --install
+```
+
+설치 창이 나오면 안내에 따라 설치가 끝날 때까지 기다립니다. **이미 설치되어 있다는 메시지가 나오면 다음 단계로 넘어가면 됩니다.** Xcode 전체를 설치한 경우에는 Xcode를 한 번 열어 필요한 초기 설정을 완료해 주세요.
+
+### 3. 압축을 푼 폴더에서 빌드
+
+다운로드 폴더에 압축을 풀었다면 터미널에서 다음 명령을 **한 줄씩** 실행합니다.
+
+```sh
+cd ~/Downloads/MCPlus-0.2.0
 ./scripts/build.sh
+```
+
+다른 위치에 풀었거나 폴더 이름이 다르다면, 터미널에 `cd`와 공백 하나를 입력한 뒤 **Finder의 압축을 푼 폴더를 터미널로 끌어다 놓고** Return을 누릅니다. 그다음 `./scripts/build.sh`를 실행하세요.
+
+첫 빌드에서는 업데이트용 라이브러리인 Sparkle을 공식 배포처에서 내려받고 체크섬을 확인합니다. 빌드가 끝나면 터미널 마지막에 `Built:`와 `MCPlus.app` 경로가 표시됩니다.
+
+### 4. 앱을 응용 프로그램 폴더로 이동
+
+빌드가 끝난 터미널에서 다음 명령을 실행합니다.
+
+```sh
+open .build/products/development
+```
+
+Finder에 나타난 **MCPlus.app을 응용 프로그램(Applications) 폴더로 옮긴 뒤, 옮긴 앱을 더블클릭해서 실행**합니다. 압축을 푼 소스 폴더 자체를 응용 프로그램 폴더로 옮기는 것은 아닙니다.
+
+앱을 옮기는 이유는 다음 단계에서 실제 사용할 설치 경로의 앱에 권한을 부여하기 위해서입니다. 이후 다른 위치로 옮기거나 다시 빌드하면 권한을 다시 확인해야 할 수 있습니다.
+
+### 5. 손쉬운 사용 권한 켜기
+
+1. MCPlus 설정 화면에서 **권한 설정**을 누릅니다.
+2. **시스템 설정 → 개인정보 보호 및 보안 → 손쉬운 사용**으로 이동합니다.
+3. 목록의 **MCPlus**를 켭니다. 목록에 없으면 **+**를 누르고 **응용 프로그램 폴더의 MCPlus.app**을 추가합니다.
+4. MCPlus를 종료한 뒤 응용 프로그램 폴더에서 다시 실행합니다.
+
+MCPlus는 다른 앱의 창을 식별하고 닫기·최소화 요청을 보내기 위해 이 권한을 사용합니다. 화면 녹화 권한은 요청하지 않습니다.
+
+### 6. 처음 사용해 보기
+
+1. 저장할 내용이 없는 테스트 창 두 개를 준비합니다.
+2. **Mission Control**을 엽니다. 기본 단축키는 `Control + ↑`이며, Mac 키보드의 Mission Control 키로도 열 수 있습니다.
+3. 창 썸네일 위에 마우스를 올리거나 `Tab`으로 창을 선택합니다.
+4. `⌘M`으로 최소화하거나 썸네일 왼쪽 위의 **×**로 창을 닫아 봅니다.
+
+설정 창을 닫아도 앱은 **화면 상단 메뉴 막대**에 남습니다. 메뉴 막대의 MCPlus 아이콘에서 설정 열기, 일시 정지, 종료를 할 수 있습니다. Dock에 아이콘이 표시되지 않는 것은 정상입니다. 설정 화면의 그림은 사용 예시입니다.
+
+## 단축키
+
+아래 창 제어·탐색 단축키는 **Mission Control이 감지된 동안** 처리됩니다.
+
+| 조작 | 동작 |
+|---|---|
+| 선택한 썸네일 왼쪽 위 × | 창 닫기 요청 |
+| 방향키 | 해당 방향의 창 선택 |
+| Tab / Shift Tab | 다음 / 이전 창 선택 |
+| ⌘W | 선택한 창 닫기 요청 |
+| ⌥⌘W | 선택한 앱의 모든 창에 닫기 요청 |
+| ⌘M | 선택한 창 최소화 |
+| Return | 선택한 썸네일 열기 |
+| ⌘Q | 선택한 앱에 정상 종료 요청; Finder는 제외 |
+| ⌃⌘Q | 추가 기능: 선택한 앱 강제 종료 |
+| ⌘H | 선택한 앱 숨기기 |
+| ⌥⌘H | 선택한 앱을 제외한 다른 일반 앱 숨기기 |
+
+**⌃⌘Q는 강제 종료이므로 저장하지 않은 내용이 사라질 수 있습니다.** 일반 닫기·정상 종료의 저장 확인과 취소는 대상 앱이 처리합니다. 문자 단축키는 QWERTY의 고정 키 위치 대신 이벤트의 문자와 보조키를 제외한 문자를 사용합니다. 실제 키보드 배열 전환에 대한 전체 검증은 남아 있습니다.
+
+설정의 **단축키 및 시작 설정**을 펼치면 기능별 단축키, 로그인 시 시작, 메뉴 막대 아이콘 표시 여부를 변경할 수 있습니다. 현재 소스에는 자동 업데이트 서버가 설정돼 있지 않습니다.
+
+## 설치 중 막혔나요?
+
+| 증상 | 확인할 내용 |
+|---|---|
+| `cd: no such file or directory` | 폴더의 위치나 이름이 예시와 다릅니다. 3단계처럼 `cd` 뒤에 Finder의 폴더를 끌어 넣으세요. |
+| `./scripts/build.sh: no such file or directory` | 현재 위치가 소스 폴더인지 확인하세요. Finder에서 해당 폴더를 열었을 때 `scripts`가 보여야 합니다. |
+| `permission denied`로 빌드 스크립트가 실행되지 않음 | 소스 폴더에서 `chmod +x scripts/*.sh`를 실행한 뒤 `./scripts/build.sh`를 다시 실행하세요. |
+| `xcrun` 또는 `swiftc`를 찾을 수 없음 | 2단계의 개발 도구 설치를 완료하세요. Xcode를 설치했다면 한 번 실행해 초기 설정도 완료해 주세요. |
+| Sparkle 다운로드 또는 체크섬 오류 | 빌드를 중단하고 인터넷 연결과 전체 오류 메시지를 확인하세요. 체크섬 검사를 제거하거나 건너뛰지 마세요. |
+| 앱은 열리는데 창 제어가 안 됨 | 5단계에서 실제 설치한 앱의 손쉬운 사용 권한을 확인하고 앱을 다시 실행하세요. 설정의 활성화 스위치도 켜져 있어야 합니다. |
+| 다시 빌드하거나 앱을 옮긴 뒤 권한이 안 됨 | 손쉬운 사용 목록의 이전 MCPlus 항목을 제거한 뒤 현재 응용 프로그램 폴더의 앱을 다시 추가하고 재실행하세요. |
+| 특정 창에 ×가 표시되지 않음 | 실제 창을 명확히 식별하지 못한 경우 조작하지 않습니다. macOS 변경, 창 종류, 애니메이션 중 배치도 영향을 줄 수 있습니다. |
+| 설정 창을 닫은 뒤 앱이 안 보임 | 상단 메뉴 막대를 확인하세요. 메뉴 막대 아이콘도 숨겼다면 응용 프로그램 폴더에서 MCPlus를 다시 열어 설정으로 돌아갈 수 있습니다. |
+
+해결되지 않으면 [Issues](https://github.com/TaeBeomShin/MCPlus/issues)에 **macOS 버전, Intel/Apple Silicon 여부, 실패한 단계, 오류 메시지**를 남겨 주세요. 진단 파일에는 열린 창 제목이 포함될 수 있으므로 공유 전에 내용을 확인하세요.
+
+## 업데이트와 제거
+
+현재는 새 소스를 받아 다시 빌드하는 방식입니다. 업데이트할 때는 실행 중인 MCPlus를 먼저 종료하고 새 앱으로 교체한 뒤, 필요하면 손쉬운 사용 권한을 다시 설정하세요.
+
+제거할 때는 설정에서 **로그인 시 시작**을 끄고 MCPlus를 종료한 뒤, 응용 프로그램 폴더의 앱을 휴지통으로 옮기면 됩니다. 시스템 설정의 손쉬운 사용 목록에서도 MCPlus를 제거할 수 있습니다.
+
+## 개발자용 안내
+
+Swift, AppKit, SwiftUI로 구현했습니다. Swift 5.8 이상과 macOS SDK가 필요합니다. 빌드 스크립트는 기본적으로 현재 Mac의 아키텍처로 앱을 만들고 로컬 ad-hoc 서명을 적용합니다. 직접 배포용 서명·공증은 별도 작업입니다.
+
+검사 실행:
+
+```sh
 ./scripts/test.sh
 ```
 
-The app is created at `.build/products/development/MCPlus.app` with a local ad-hoc signature. Sparkle 2.10.0 is downloaded from its official release and verified against a pinned SHA-256. No publisher account or distribution certificate is required for this local build.
-
-Optional universal build:
+arm64·x86_64 universal 빌드:
 
 ```sh
 ARCHS='arm64 x86_64' ./scripts/build.sh
 ```
 
-For Xcode, first run `./scripts/fetch-sparkle.sh`, then open `MCPlus.xcodeproj`. The shared scheme is `MCPlus`. For local signing overrides, copy `Config/Local.example.xcconfig` to `Config/Local.xcconfig` and use your own team and bundle identifier. The shell build uses the `MCPLUS_BUNDLE_ID` environment variable instead. Do not commit local signing settings or credentials.
+Xcode를 사용하려면 먼저 `./scripts/fetch-sparkle.sh`를 실행한 뒤 `MCPlus.xcodeproj`를 엽니다. 공유 scheme은 `MCPlus`입니다. 서명 설정은 `Config/Local.example.xcconfig`를 `Config/Local.xcconfig`로 복사한 뒤 본인 Team과 Bundle ID를 지정합니다. 이 로컬 파일은 git에서 제외됩니다. 셸 빌드의 Bundle ID는 `MCPLUS_BUNDLE_ID` 환경 변수로 지정합니다. 인증서·개인 키·계정 비밀번호는 저장소에 넣지 마세요.
 
-The shell script is the verified build entry point. `Package.swift` is also included, but SwiftPM packaging is not the verified app-bundle workflow.
+`Package.swift`도 포함하지만 앱 번들 빌드의 검증된 진입점은 `scripts/build.sh`입니다. Sparkle 2.10.0은 고정 SHA-256으로 검증하며, 해당 프레임워크는 저장소에 포함하지 않습니다.
 
-## Run
+- [검사 및 전용 테스트 앱](docs/TESTING.md)
+- [구현 구조](docs/ARCHITECTURE.md)
+- [검증 상태와 남은 항목](docs/STATUS.md)
+- [Mac App Store 기술 제약](docs/app-store-feasibility.md)
 
-1. Move your built app to the location where you intend to keep it and open it.
-2. Grant it Accessibility permission in System Settings → Privacy & Security → Accessibility. A moved or rebuilt ad-hoc app may need to be approved again.
-3. Open Mission Control and hover over a window thumbnail, or select one with Tab or the arrow keys.
+현재는 개발용 미리보기입니다. 물리 키보드·마우스 전체 경로, 다중 화면·Spaces·전체 화면, 로그인 시작과 실제 업데이트, 지원 OS·하드웨어 전체 검증이 완료되지 않았습니다. 비공개 시스템 동작과 선택적인 `_AXUIElementGetWindow` bridge에 의존하며, macOS 업데이트에 따라 조정이 필요할 수 있습니다. **앱스토어 제출·승인을 받은 배포판이 아닙니다.**
 
-Closing the settings window leaves the app in the menu bar. Use the menu bar to pause, reopen settings or quit. Start with disposable test windows; saving and cancellation are handled by the target application.
+창 메타데이터는 로컬에서 읽으며, 진단 파일은 사용자가 저장을 선택할 때 생성합니다. 자동 전송하지 않습니다. 직접 배포용 Sparkle 업데이트는 배포자가 HTTPS 피드와 서명 공개 키를 설정하기 전까지 미설정 상태입니다.
 
-| Input | Action |
-|---|---|
-| × over the selected thumbnail | Request window close |
-| Arrow keys | Select a window in that direction |
-| Tab / Shift Tab | Next / previous thumbnail |
-| ⌘W | Request selected window close |
-| ⌥⌘W | Request all windows of the selected app close |
-| ⌘M | Minimize selected window |
-| Return | Open selected thumbnail |
-| ⌘Q | Request normal app termination; Finder is excluded |
-| ⌃⌘Q | Additional force-quit shortcut; unsaved changes may be lost |
-| ⌘H | Hide selected app |
-| ⌥⌘H | Hide other regular apps |
+## 라이선스와 참고 자료
 
-Shortcuts operate only while Mission Control is detected. Letter shortcuts use event characters with a modifier-independent fallback, rather than assuming QWERTY key positions. Actual keyboard-layout switching remains a manual verification item.
+소스는 [MIT 라이선스](LICENSE)로 공개합니다. 외부 구성 요소와 참고 자료의 고지는 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)에 있으며 Sparkle 라이선스도 보존합니다.
 
-## Tests and implementation
-
-- [Testing](docs/TESTING.md): assertion suite and disposable native fixture.
-- [Architecture](docs/ARCHITECTURE.md): window identity, input routing and execution checks.
-- [Status](docs/STATUS.md): verified scope and remaining release work.
-- [Mac App Store feasibility](docs/app-store-feasibility.md): sandbox restrictions.
-
-The app reads cross-app window metadata locally. It does not request screen recording permission. User-initiated diagnostic exports can contain open window titles; inspect those files before sharing them. Sparkle update checks remain unconfigured until a publisher supplies an HTTPS feed and signing public key.
-
-## License and references
-
-The project license is in [LICENSE](LICENSE); third-party notices are in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Sparkle's license is retained with the resources.
-
-This is an independent implementation inspired by the public functionality of [Mission Control Plus](https://www.fadel.io/missioncontrolplus). Static investigation used [REA](https://github.com/morluto/rea). Mission Control accessibility-tree investigation also consulted Hammerspoon's spaces module. The commercial application's binaries, assets, licensing code and exported disassembly are not part of this source release. This project is not affiliated with those projects or their authors.
+[Mission Control Plus](https://www.fadel.io/missioncontrolplus)의 공개 기능과 [REA](https://github.com/morluto/rea)를 통한 정적 조사를 참고해 독립적으로 구현했습니다. Mission Control 접근성 트리 조사에는 Hammerspoon의 spaces 모듈도 참고했습니다. 원본 상용 앱의 바이너리·이미지·라이선스 코드와 분석용 disassembly는 포함하지 않습니다. 원본 제품이나 참고 프로젝트와 제휴한 프로젝트는 아닙니다.
