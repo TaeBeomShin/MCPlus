@@ -1,0 +1,17 @@
+MACOSX_DEPLOYMENT_TARGET = 13.0
+SWIFT_VERSION = 5.0
+ALWAYS_SEARCH_USER_PATHS = NO
+// Preserve the vendor's already-signed Sparkle helper binaries when copying.
+COPY_PHASE_STRIP = NO
+PRODUCT_NAME = MCPlus
+PRODUCT_BUNDLE_IDENTIFIER = local.mcplus.app
+INFOPLIST_FILE = Resources/Info.plist
+GENERATE_INFOPLIST_FILE = NO
+CODE_SIGN_STYLE = Automatic
+ENABLE_HARDENED_RUNTIME = YES
+ENABLE_APP_SANDBOX = NO
+CODE_SIGN_ENTITLEMENTS = Config/Direct.entitlements
+LD_RUNPATH_SEARCH_PATHS = $(inherited) @executable_path/../Frameworks
+FRAMEWORK_SEARCH_PATHS = $(inherited) $(SRCROOT)/.build/vendor/Sparkle-2.10.0
+COMBINE_HIDPI_IMAGES = YES
+#include? "Local.xcconfig"
